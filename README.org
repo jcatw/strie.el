@@ -1,0 +1,35 @@
+* trie.el: Tries for emacs
+  trie.el provides a simple implementation of the trie data structure.
+  It uses only native elisp data structures, so there are no
+  dependencies to worry about.
+
+** Commentary:
+   Tries are an efficient data structure for the storage of strings.
+   Addition, deletion, and query functions all have O(m) performance,
+   where m is the length of the string to be added/deleted/queried.
+   
+   This implementation supports key-value storage, which means that a trie
+   can act as a substitute for a dictionary / hash-table.
+   
+   See http://en.wikipedia.org/wiki/Trie for more details.
+
+** Setup:
+   Simply add trie.el to your load path and *(require 'trie)* to your
+   .emacs.
+
+** Usage:
+   *(setq a-trie (trie-new))*
+
+   *(trie-add a-trie "one" 1)*
+   *(trie-add a-trie "two" "2")*
+   
+   *(trie-contains? a-trie "one")* -> t
+   *(trie-contains? a-trie "on" )* -> nil
+   
+   *(trie-get a-trie "one")* -> 1
+   *(trie-get a-trie "two")* -> "2"
+   *(trie-get a-trie "twomore")* -> nil
+   
+   *(trie-delete a-trie "one")*
+   *(trie-contains? a-trie "one")* -> nil
+   *(trie-get a-trie "one")* -> nil
