@@ -1,6 +1,6 @@
-;;; trie.el --- A simple implementation of the trie data structure
-;;;             which uses native elisp data structures.  No
-;;;             dependencies!
+;;; strie.el --- A simple implementation of the trie data structure
+;;;              which uses native elisp data structures.  No
+;;;              dependencies!
 
 ;; Author: James Atwood <jatwood@cs.umass.edu>
 
@@ -32,117 +32,117 @@
 
 ;;; Setup:
 
-;; Simply add trie.el to your load path and (require 'trie) to your .emacs.
+;; Simply add strie.el to your load path and (require 'trie) to your .emacs.
 
 ;;; Usage:
 
-;; (setq a-trie (trie-new))
+;; (setq a-trie (strie-new))
 ;;
-;; (trie-add a-trie "one" 1)
-;; (trie-add a-trie "two" "2")
+;; (strie-add a-trie "one" 1)
+;; (strie-add a-trie "two" "2")
 ;;
-;; (trie-contains? a-trie "one") -> t
-;; (trie-contains? a-trie "on" ) -> nil
+;; (strie-contains? a-trie "one") -> t
+;; (strie-contains? a-trie "on" ) -> nil
 ;;
-;; (trie-get a-trie "one") -> 1
-;; (trie-get a-trie "two") -> "2"
-;; (trie-get a-trie "twomore") -> nil
+;; (strie-get a-trie "one") -> 1
+;; (strie-get a-trie "two") -> "2"
+;; (strie-get a-trie "twomore") -> nil
 ;;
-;; (trie-delete a-trie "one")
-;; (trie-contains? a-trie "one") -> nil
-;; (trie-get a-trie "one") -> nil
+;; (strie-delete a-trie "one")
+;; (strie-contains? a-trie "one") -> nil
+;; (strie-get a-trie "one") -> nil
 
 ;;; Code:
-(defun trie-new ()
+(defun strie-new ()
   "Creates and returns a new trie."
   (list nil ;;terminal
 	nil ;;value
 	nil ;;children
 	))
-(defun trie-terminal? (trie)
+(defun strie-terminal? (trie)
   "Trie node terminal? getter."
   (car trie))
 
-(defun trie-set-terminal (trie terminal)
+(defun strie-set-terminal (trie terminal)
   "Trie node terminal? setter."
   (setf (car trie) terminal))
 
-(defun trie-value (trie)
+(defun strie-value (trie)
   "Trie node value getter."
   (cadr trie))
 
-(defun trie-set-value (trie value)
+(defun strie-set-value (trie value)
   "Trie node value setter."
   (setf (cadr trie) value))
 
-(defun trie-children (trie)
+(defun strie-children (trie)
   "Trie node children getter."
   (caddr trie))
 
-(defun trie-add-child (trie child)
+(defun strie-add-child (trie child)
   "Adds a child to the trie node.  Child a (key . trie) pair."
   (setf (caddr trie) (cons child (caddr trie))))
 
-(defun trie-get-child (trie key)
+(defun strie-get-child (trie key)
   "Gets child with key from a trie node."
-  (cdr (assoc key (trie-children trie))))
+  (cdr (assoc key (strie-children trie))))
 
-(defun trie-add (trie str val)
+(defun strie-add (trie str val)
   "Adds str to trie with value val."
   (cond
    ((string= "" str)
-    (trie-set-terminal trie t)
-    (trie-set-value trie val))
+    (strie-set-terminal trie t)
+    (strie-set-value trie val))
    (t
     (let ((next-char (substring str 0 1))
 	  (rest-chars (substring str 1 nil)))
-      (if (trie-get-child trie next-char)
-	  (trie-add (trie-get-child trie next-char) rest-chars val)
-	  (let ((new-trie (trie-new)))
-	    (trie-add-child trie `(,next-char . ,new-trie))
-	    (trie-add new-trie rest-chars val)))))))
+      (if (strie-get-child trie next-char)
+	  (strie-add (strie-get-child trie next-char) rest-chars val)
+	  (let ((new-trie (strie-new)))
+	    (strie-add-child trie `(,next-char . ,new-trie))
+	    (strie-add new-trie rest-chars val)))))))
 
-(defun trie-contains? (trie str)
+(defun strie-contains? (trie str)
   "Returns t if trie contains str, nil otherwise."
   (cond
-   ((string= "" str) (trie-terminal? trie))
+   ((string= "" str) (strie-terminal? trie))
    (t
     (let ((next-char (substring str 0 1))
 	  (rest-chars (substring str 1 nil)))
-      (let ((next-char-trie (trie-get-child trie next-char)))
+      (let ((next-char-trie (strie-get-child trie next-char)))
 	(if next-char-trie
-	    (trie-contains? next-char-trie rest-chars)
+	    (strie-contains? next-char-trie rest-chars)
 	  nil))))))
 
-(defun trie-get (trie str)
+(defun strie-get (trie str)
   "Returns the value associated with str if trie contains str,
 nil otherwise."
   (cond
-   ((string= "" str) (trie-value trie))
+   ((string= "" str) (strie-value trie))
    (t
     (let ((next-char (substring str 0 1))
 	  (rest-chars (substring str 1 nil)))
-      (let ((next-char-trie (trie-get-child trie next-char)))
+      (let ((next-char-trie (strie-get-child trie next-char)))
 	(if next-char-trie
-	    (trie-get next-char-trie rest-chars)
+	    (strie-get next-char-trie rest-chars)
 	  nil))))))
 
-(defun trie-delete (trie str)
+(defun strie-delete (trie str)
   "If trie contains str, deletes str from trie.  Otherwise,
 no action is taken.  Note that the trie structure is left intact; the
 terminal? flag and value field for the correct node are simply set to nil."
   (cond
    ((string= "" str)
-    (trie-set-value trie nil)
-    (trie-set-terminal trie nil))
+    (strie-set-value trie nil)
+    (strie-set-terminal trie nil))
    (t
     (let ((next-char (substring str 0 1))
 	  (rest-chars (substring str 1 nil)))
-      (let ((next-char-trie (trie-get-child trie next-char)))
+      (let ((next-char-trie (strie-get-child trie next-char)))
 	(if next-char-trie
-	    (trie-delete next-char-trie rest-chars)
+	    (strie-delete next-char-trie rest-chars)
 	  nil))))))
 
 
-(provide 'trie)
-;;; trie.el ends here
+(provide 'strie)
+;;; strie.el ends here

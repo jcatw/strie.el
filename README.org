@@ -1,5 +1,5 @@
-* trie.el: tries for emacs
-  trie.el provides a simple implementation of the trie data structure.
+* strie.el: simple tries for emacs
+  strie.el provides a simple implementation of the trie data structure.
   It uses only native elisp data structures, so there are no
   dependencies to worry about.
 
@@ -14,28 +14,28 @@
    See http://en.wikipedia.org/wiki/Trie for more details.
 
 ** Setup:
-   Simply add trie.el to your load path and *(require 'trie)* to your
+   Simply add strie.el to your load path and *(require 'strie)* to your
    .emacs.
 
 ** Usage:
-   *(setq a-trie (trie-new))*
+   *(setq a-trie (strie-new))*
 
-   *(trie-add a-trie "one" 1)*
+   *(strie-add a-trie "one" 1)*
 
-   *(trie-add a-trie "two" "2")*
+   *(strie-add a-trie "two" "2")*
    
-   *(trie-contains? a-trie "one")* -> t
+   *(strie-contains? a-trie "one")* -> t
 
-   *(trie-contains? a-trie "on" )* -> nil
+   *(strie-contains? a-trie "on" )* -> nil
    
-   *(trie-get a-trie "one")* -> 1
+   *(strie-get a-trie "one")* -> 1
 
-   *(trie-get a-trie "two")* -> "2"
+   *(strie-get a-trie "two")* -> "2"
 
-   *(trie-get a-trie "twomore")* -> nil
+   *(strie-get a-trie "twomore")* -> nil
    
-   *(trie-delete a-trie "one")*
+   *(strie-delete a-trie "one")*
 
-   *(trie-contains? a-trie "one")* -> nil
+   *(strie-contains? a-trie "one")* -> nil
 
-   *(trie-get a-trie "one")* -> nil
+   *(strie-get a-trie "one")* -> nil
