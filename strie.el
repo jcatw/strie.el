@@ -32,7 +32,7 @@
 
 ;;; Setup:
 
-;; Simply add strie.el to your load path and (require 'trie) to your .emacs.
+;; Simply add strie.el to your load path and (require 'strie) to your .emacs.
 
 ;;; Usage:
 
