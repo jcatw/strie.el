@@ -7,8 +7,11 @@
    Tries are an efficient data structure for the storage of strings.
    Addition, deletion, and query functions all have O(m) performance,
    where m is the length of the string to be added/deleted/queried.
+
+   They are a natural choice for completing partial strings according to some
+   dictionary.
    
-   This implementation supports key-value storage, which means that a trie
+   This implementation also supports key-value storage, which means that a trie
    can act as a substitute for a dictionary / hash-table.
    
    See http://en.wikipedia.org/wiki/Trie for more details.
@@ -18,22 +21,36 @@
    .emacs.
 
 ** Usage:
+*** create a trie
    *(setq a-trie (strie-new))*
 
+*** add key-value pairs
    *(strie-add a-trie "one" 1)*
 
    *(strie-add a-trie "two" "2")*
-   
+
+*** ensure that the keys appear   
    *(strie-contains? a-trie "one")* -> t
 
    *(strie-contains? a-trie "on" )* -> nil
    
+*** get values
    *(strie-get a-trie "one")* -> 1
 
    *(strie-get a-trie "two")* -> "2"
 
    *(strie-get a-trie "twomore")* -> nil
-   
+
+*** get completions
+    *(strie-add a-trie "only" nil)*
+
+    *(strie-add a-trie "onetime" nil)*
+
+    *(strie-complete a-trie "on")* -> ("only" "one" "onetime")
+
+    *(strie-complete a-trie "one")* -> ("one" "onetime")
+
+*** delete a key
    *(strie-delete a-trie "one")*
 
    *(strie-contains? a-trie "one")* -> nil

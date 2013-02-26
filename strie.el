@@ -25,7 +25,10 @@
 ;; Addition, deletion, and query functions all have O(m) performance,
 ;; where m is the length of the string to be added/deleted/queried.
 ;;
-;; This implementation supports key-value storage, which means that a trie
+;; They are a natural choice for completing partial strings according to some
+;; dictionary.
+;;
+;; This implementation also supports key-value storage, which means that a trie
 ;; can act as a substitute for a dictionary / hash-table.
 ;;
 ;; See http://en.wikipedia.org/wiki/Trie for more details.
@@ -36,18 +39,29 @@
 
 ;;; Usage:
 
+;; create a trie
 ;; (setq a-trie (strie-new))
 ;;
+;; add key-value pairs
 ;; (strie-add a-trie "one" 1)
 ;; (strie-add a-trie "two" "2")
 ;;
+;; ensure that the keys appear
 ;; (strie-contains? a-trie "one") -> t
 ;; (strie-contains? a-trie "on" ) -> nil
 ;;
+;; get values
 ;; (strie-get a-trie "one") -> 1
 ;; (strie-get a-trie "two") -> "2"
 ;; (strie-get a-trie "twomore") -> nil
 ;;
+;; get completions
+;; (strie-add a-trie "only" nil)
+;; (strie-add a-trie "onetime" nil)
+;; (strie-complete a-trie "on") -> ("only" "one" "onetime")
+;; (strie-complete a-trie "one") -> ("one" "onetime")
+;;
+;; delete a key
 ;; (strie-delete a-trie "one")
 ;; (strie-contains? a-trie "one") -> nil
 ;; (strie-get a-trie "one") -> nil
@@ -142,6 +156,54 @@ terminal? flag and value field for the correct node are simply set to nil."
 	(if next-char-trie
 	    (strie-delete next-char-trie rest-chars)
 	  nil))))))
+
+(defun strie-mappend (function sequence)
+  (reduce 'append (mapcar function sequence)))
+
+(defun strie-bfs-keys-help (trie stracc)
+  (let ((result nil))
+    (cond
+     ((null trie) result)
+     (t (if (strie-terminal? trie) (setq result (cons stracc result)))
+	(let ((children (strie-children trie)))
+	  (append result
+		  (strie-mappend (lambda (child-pair)
+				   (let ((chr (car child-pair))
+					 (child (cdr child-pair)))
+				     (strie-bfs-keys-help child (concat stracc chr))))
+				 children)))))))
+
+(defun strie-bfs-keys (trie)
+  "Breadth-first search for all terminal keys in trie."
+  (strie-bfs-keys-help trie ""))
+
+(defun strie-complete-help (trie partial original)
+  (cond
+   ;; we have terminated; breadth-first search for completions
+   ((string= "" partial) (mapcar (lambda (k) (concat original k))
+				 (strie-bfs-keys trie)))
+
+   ;; we have not terminated
+   (t
+    (let ((next-char (substring partial 0 1))
+	  (rest-chars (substring partial 1 nil)))
+      (let ((next-char-trie (strie-get-child trie next-char)))
+	(if next-char-trie
+	    (strie-complete-help next-char-trie rest-chars original)
+	  nil))))))
+
+(defun strie-complete (trie partial)
+  "Return a  list of  possible completions  of partial  given the
+contents of trie.  If no  completions exist, return nil.  If trie
+contains  partial itself,  partial  is included  in  the list  of
+completions."
+  (strie-complete-help trie partial partial))
+
+
+
+
+  
+
 
 
 (provide 'strie)
