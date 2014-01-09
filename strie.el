@@ -199,12 +199,5 @@ contains  partial itself,  partial  is included  in  the list  of
 completions."
   (strie-complete-help trie partial partial))
 
-
-
-
-  
-
-
-
 (provide 'strie)
 ;;; strie.el ends here
