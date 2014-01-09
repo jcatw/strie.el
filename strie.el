@@ -1,6 +1,4 @@
-;;; strie.el --- A simple implementation of the trie data structure
-;;;              which uses native elisp data structures.  No
-;;;              dependencies!
+;;; strie.el --- A simple trie data structure implementation
 
 ;; Author: James Atwood <jatwood@cs.umass.edu>
 
