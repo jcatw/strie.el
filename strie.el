@@ -1,6 +1,7 @@
 ;;; strie.el --- A simple trie data structure implementation
 
 ;; Author: James Atwood <jatwood@cs.umass.edu>
+;; Package-Requires: ((cl-lib "0.5"))
 
 ;; This file is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -65,6 +66,9 @@
 ;; (strie-get a-trie "one") -> nil
 
 ;;; Code:
+
+(require 'cl-lib)
+
 (defun strie-new ()
   "Creates and returns a new trie."
   (list nil ;;terminal
@@ -89,11 +93,11 @@
 
 (defun strie-children (trie)
   "Trie node children getter."
-  (caddr trie))
+  (cl-caddr trie))
 
 (defun strie-add-child (trie child)
   "Adds a child to the trie node.  Child a (key . trie) pair."
-  (setf (caddr trie) (cons child (caddr trie))))
+  (setf (cl-caddr trie) (cons child (cl-caddr trie))))
 
 (defun strie-get-child (trie key)
   "Gets child with key from a trie node."
@@ -156,7 +160,7 @@ terminal? flag and value field for the correct node are simply set to nil."
 	  nil))))))
 
 (defun strie-mappend (function sequence)
-  (reduce 'append (mapcar function sequence)))
+  (cl-reduce 'append (mapcar function sequence)))
 
 (defun strie-bfs-keys-help (trie stracc)
   (let ((result nil))
